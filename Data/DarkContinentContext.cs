@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using DarkContinent.Models;
-
 namespace DarkContinent.Data;
 
 public partial class DarkContinentContext : DbContext
@@ -32,6 +31,7 @@ public partial class DarkContinentContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Activity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__activiti__3213E83FB0FDE3B2");
