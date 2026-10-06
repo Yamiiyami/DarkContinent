@@ -68,7 +68,14 @@ public class FoodService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        return await _context.Foods.Where(f => f.Id == id).ExecuteDeleteAsync() != 0;
+        var food = await _context.Foods.FindAsync(id);
+        if(food is null)
+        {
+            throw new Exception("Không tìm thấy món ăn");
+        }
+        _context.Foods.Remove(food); 
+        var result = await _context.SaveChangesAsync(); 
+        return result > 0;
     }
 
 }

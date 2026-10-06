@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DarkContinent.Models;
 
-public partial class Food
+public partial class Food : IHasTimestamps, ISoftDelete
 {
     public int Id { get; set; }
 
@@ -17,7 +17,7 @@ public partial class Food
 
     public short HappinessGain { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
 
     public DateTime CreatedAt { get; set; }
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DarkContinent.Models;
 
-public partial class Pet
+public partial class Pet : IHasTimestamps, ISoftDelete
 {
     public int Id { get; set; }
 
@@ -11,7 +11,7 @@ public partial class Pet
 
     public int Type { get; set; }
 
-    public int Age { get; set; }
+    public int Age { get; set; } = 0;
 
     public decimal Hunger { get; set; }
 
@@ -19,15 +19,15 @@ public partial class Pet
 
     public decimal Happiness { get; set; }
 
-    public int Level { get; set; }
+    public int Level { get; set; } = 1;
 
-    public int Exp { get; set; }
+    public int Exp { get; set; } = 0;
 
-    public DateTime BornAt { get; set; }
+    public DateTime BornAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? DiedAt { get; set; }
 
-    public bool IsAlive { get; set; }
+    public bool IsAlive { get; set; } = true;
 
     public DateTime LastCalculatedAt { get; set; }
 

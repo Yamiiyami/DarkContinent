@@ -22,8 +22,6 @@ public class AuthDbContext : IdentityDbContext<User>
             {
                 entityType.SetTableName(tableName.Substring(6));
             }
-
-
         }
        
     }

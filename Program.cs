@@ -22,7 +22,9 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.PropertyNamingPolicy = namingPolicy;
 });
+
 builder.Services.AddOpenApi();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AuthDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -37,6 +39,10 @@ builder.Services.AddScoped<PetTypeService>();
 builder.Services.AddScoped<UserServices>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<RoleService>();
+builder.Services.AddScoped<RoleClaimService>();
+builder.Services.AddScoped<PetService>();
+builder.Services.AddScoped<CurrentUserService>();
+
 builder.Services
     .AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AuthDbContext>();

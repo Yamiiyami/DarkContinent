@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using DarkContinent.Models;
+using System.Linq.Expressions;
+
 namespace DarkContinent.Data;
 
 public partial class DarkContinentContext : DbContext
 {
+    private readonly CurrentUserService? _currentUserService;
     public DarkContinentContext()
     {
     }
 
-    public DarkContinentContext(DbContextOptions<DarkContinentContext> options)
+    public DarkContinentContext(DbContextOptions<DarkContinentContext> options, CurrentUserService currentUserService)
         : base(options)
     {
+        _currentUserService = currentUserService;
     }
 
     public virtual DbSet<Activity> Activities { get; set; }
@@ -346,7 +350,73 @@ public partial class DarkContinentContext : DbContext
                 .HasColumnName("updated_at");
         });
 
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
+            {
+                modelBuilder.Entity(entityType.ClrType)
+                  .HasQueryFilter(ConvertFilterExpression(entityType.ClrType));
+            }
+        }
+
         OnModelCreatingPartial(modelBuilder);
+    }
+
+    private static LambdaExpression ConvertFilterExpression(Type type)
+    {
+        var parameter = Expression.Parameter(type, "p");
+
+        var property = Expression.Property(parameter, nameof(ISoftDelete.DeletedAt));
+
+        var nullConstant = Expression.Constant(null, property.Type);
+
+        var equalExpression = Expression.Equal(property, nullConstant);
+
+        return Expression.Lambda(equalExpression, parameter);
+    }
+
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entities = ChangeTracker.Entries();
+
+        foreach (var entity in entities)
+        {
+            if (entity.Entity is IHasTimestamps hasTimestamps)
+            {
+                if (entity.State == EntityState.Added)
+                {
+                    hasTimestamps.CreatedAt = DateTime.UtcNow;
+                    hasTimestamps.UpdatedAt = DateTime.UtcNow;
+                }
+                else if (entity.State == EntityState.Modified)
+                {
+                    hasTimestamps.UpdatedAt = DateTime.UtcNow;
+                }
+            }
+
+            if (entity.Entity is IHasAuditUsers hasAuditUsers)
+            {
+                if (entity.State == EntityState.Added)
+                {
+                    hasAuditUsers.CreatedBy = _currentUserService?.UserId;
+                    hasAuditUsers.UpdatedBy = _currentUserService?.UserId;
+                }
+                else if (entity.State == EntityState.Modified)
+                {
+                    hasAuditUsers.UpdatedBy = _currentUserService?.UserId;
+                }
+            }
+
+            if (entity.Entity is ISoftDelete softDelete && entity.State == EntityState.Deleted)
+            {
+                entity.State = EntityState.Modified;
+                softDelete.DeletedAt = DateTime.UtcNow;
+            }
+        }
+
+
+        return base.SaveChangesAsync(cancellationToken);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

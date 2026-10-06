@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DarkContinent.Models;
 
-public partial class PetType
+public partial class PetType : IHasTimestamps, ISoftDelete
 {
     public int Id { get; set; }
 
@@ -21,7 +21,7 @@ public partial class PetType
 
     public short SleepHungerCostPerHour { get; set; }
 
-    public bool IsAlive { get; set; }
+    public bool IsAlive { get; set; } = true;
 
     public DateTime CreatedAt { get; set; }
 

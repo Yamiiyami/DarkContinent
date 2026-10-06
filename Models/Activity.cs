@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DarkContinent.Models;
 
-public partial class Activity
+public partial class Activity : IHasTimestamps, ISoftDelete
 {
     public int Id { get; set; }
 
@@ -23,7 +23,7 @@ public partial class Activity
 
     public byte MinEnergyRequired { get; set; }
 
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
 
     public DateTime CreatedAt { get; set; }
 
