@@ -1,3 +1,4 @@
+using DarkContinent.Authorization;
 using DarkContinent.DTOs.Request;
 using DarkContinent.DTOs.Requests;
 using DarkContinent.DTOs.Responses;
@@ -19,12 +20,14 @@ public class ActivityController : BaseApiController
 
 
     [HttpGet("get-list")]
+    [HasPermission("activity.read")]
     public async Task<ActionResult<List<ActivityResponse>>> GetPageAsync(int page = 1, int pageSize = 10)
     {
         return SuccessResponse("get successfully", await _activityService.GetPageAsync(page, pageSize));
     }
 
     [HttpPost("create")]
+    [HasPermission("activity.create")]
     public async Task<ActionResult<ActivityResponse>> CreateAsync(CreateActivityRequest activity)
     {
         var result = await _activityService.Create(activity);
@@ -36,6 +39,7 @@ public class ActivityController : BaseApiController
     }
 
     [HttpPost("update")]
+    [HasPermission("activity.update")]
     public async Task<ActionResult<ActivityResponse>> UpdateAsync(UpdateActivityRequest activity)
     {
         var result = await _activityService.updateAsync(activity);
@@ -45,8 +49,9 @@ public class ActivityController : BaseApiController
         }
         return ErrorResponse("update failed");
     }
-    
+
     [HttpDelete("delete")]
+    [HasPermission("activity.delete")]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         var result = await _activityService.DeleteAsync(id);
@@ -56,6 +61,7 @@ public class ActivityController : BaseApiController
         }
         return ErrorResponse("delete failed");
     }
-            
+
+
 
 }

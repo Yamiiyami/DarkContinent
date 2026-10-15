@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using DarkContinent.Models;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DarkContinent.Data;
 
@@ -130,7 +132,8 @@ public partial class DarkContinentContext : DbContext
                 .HasColumnName("deleted_at");
             entity.Property(e => e.DiedAt)
                 .HasColumnType("datetime")
-                .HasColumnName("died_at");
+                .HasColumnName("died_at")
+                .IsRequired(false);
             entity.Property(e => e.Energy)
                 .HasDefaultValue(100.00m)
                 .HasColumnType("decimal(5, 2)")
@@ -147,6 +150,15 @@ public partial class DarkContinentContext : DbContext
             entity.Property(e => e.IsAlive)
                 .HasDefaultValue(true)
                 .HasColumnName("is_alive");
+            entity.Property(e => e.IsPlaying)
+                .HasDefaultValue(false)
+                .HasColumnName("is_playing");
+            entity.Property(e => e.IsSleep)
+                .HasColumnName("is_sleep");
+            entity.Property(e => e.SleepStartedAt)
+                .HasColumnType("datetime")
+                .IsRequired(false)
+                .HasColumnName("sleep_started_at");
             entity.Property(e => e.LastCalculatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -323,9 +335,9 @@ public partial class DarkContinentContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(500)
                 .HasColumnName("description");
-            entity.Property(e => e.IsAlive)
+            entity.Property(e => e.IsActive)
                 .HasDefaultValue(true)
-                .HasColumnName("is_alive");
+                .HasColumnName("is_active");
             entity.Property(e => e.MaxEnergy)
                 .HasDefaultValue(100)
                 .HasColumnName("max_energy");
@@ -350,7 +362,7 @@ public partial class DarkContinentContext : DbContext
                 .HasColumnName("updated_at");
         });
 
-        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        foreach (IMutableEntityType entityType in modelBuilder.Model.GetEntityTypes())
         {
             if (typeof(ISoftDelete).IsAssignableFrom(entityType.ClrType))
             {
@@ -378,39 +390,39 @@ public partial class DarkContinentContext : DbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var entities = ChangeTracker.Entries();
+        IEnumerable<EntityEntry> entities = ChangeTracker.Entries();
 
-        foreach (var entity in entities)
+        foreach (EntityEntry entry in entities)
         {
-            if (entity.Entity is IHasTimestamps hasTimestamps)
+            if (entry.Entity is IHasTimestamps hasTimestamps)
             {
-                if (entity.State == EntityState.Added)
+                if (entry.State == EntityState.Added)
                 {
                     hasTimestamps.CreatedAt = DateTime.UtcNow;
                     hasTimestamps.UpdatedAt = DateTime.UtcNow;
                 }
-                else if (entity.State == EntityState.Modified)
+                else if (entry.State == EntityState.Modified)
                 {
                     hasTimestamps.UpdatedAt = DateTime.UtcNow;
                 }
             }
 
-            if (entity.Entity is IHasAuditUsers hasAuditUsers)
+            if (entry.Entity is IHasAuditUsers hasAuditUsers)
             {
-                if (entity.State == EntityState.Added)
+                if (entry.State == EntityState.Added)
                 {
                     hasAuditUsers.CreatedBy = _currentUserService?.UserId;
                     hasAuditUsers.UpdatedBy = _currentUserService?.UserId;
                 }
-                else if (entity.State == EntityState.Modified)
+                else if (entry.State == EntityState.Modified)
                 {
                     hasAuditUsers.UpdatedBy = _currentUserService?.UserId;
                 }
             }
 
-            if (entity.Entity is ISoftDelete softDelete && entity.State == EntityState.Deleted)
+            if (entry.Entity is ISoftDelete softDelete && entry.State == EntityState.Deleted)
             {
-                entity.State = EntityState.Modified;
+                entry.State = EntityState.Modified;
                 softDelete.DeletedAt = DateTime.UtcNow;
             }
         }

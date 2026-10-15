@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DarkContinent.Authorization;
 using DarkContinent.DTOs.Requests;
 using DarkContinent.Models;
 using DarkContinent.Services;
@@ -18,6 +19,7 @@ public class FoodController : BaseApiController
     }
 
     [HttpGet("get-list")]
+    [HasPermission("food.read")]
     public async Task<ActionResult<List<Food>>> GetPageAsync([Range(1, 100)] int page = 1, int pageSize = 10)
     {
         var foods = await _foodService.GetPageAsync(page, pageSize);
@@ -25,6 +27,7 @@ public class FoodController : BaseApiController
     }
 
     [HttpPost("create")]
+    [HasPermission("food.create")]
     public async Task<ActionResult> CreateAsync(CreateFoodRequest food)
     {
         await _foodService.CreateAsync(food);
@@ -32,6 +35,7 @@ public class FoodController : BaseApiController
     }
 
     [HttpPost("update")]
+    [HasPermission("food.update")]
     public async Task<ActionResult> UpdateAsync(UpdateFoodRequest food)
     {
         await _foodService.UpdateAsync(food);
@@ -39,6 +43,7 @@ public class FoodController : BaseApiController
     }
 
     [HttpDelete("delete/{id}")]
+    [HasPermission("food.delete")]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         bool result = await _foodService.DeleteAsync(id);

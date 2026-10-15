@@ -1,6 +1,7 @@
 using DarkContinent.Data;
 using DarkContinent.DTOs.Requests;
 using DarkContinent.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public class AuthController : BaseApiController
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
     public async Task<ActionResult> Login([FromBody] LoginRequest request)
     {
         var user = await _userService.Login(request);
@@ -30,6 +32,7 @@ public class AuthController : BaseApiController
     }
 
     [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<ActionResult> Register([FromBody] RegisterRequest request)
     {
         await _userService.Register(request);
@@ -37,6 +40,7 @@ public class AuthController : BaseApiController
     }
 
     [HttpPost("refresh")]
+    [AllowAnonymous]
     public async Task<ActionResult> Refresh([FromBody] RefreshRequest request)
     {
         var (accessToken, refreshToken, exp) = await _tokenService.RefreshAsync(request.RefreshToken);

@@ -113,4 +113,6 @@ public class ActivityService
         return await _context.Activities.Where(a => a.Id == id).ExecuteDeleteAsync() != 0;
     }
 
+    
+
 }

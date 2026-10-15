@@ -18,6 +18,6 @@ public class UpdatePetTypeRequest
 
     public short SleepHungerCostPerHour { get; set; }
 
-    public bool IsAlive { get; set; }
+    public bool IsActive { get; set; }
 
 } 

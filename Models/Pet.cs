@@ -29,6 +29,12 @@ public partial class Pet : IHasTimestamps, ISoftDelete
 
     public bool IsAlive { get; set; } = true;
 
+    public bool IsPlaying { get; set; } = false;
+
+    public bool IsSleep { get; set; } = true;
+
+    public DateTime? SleepStartedAt { get; set; }
+
     public DateTime LastCalculatedAt { get; set; }
 
     public DateTime CreatedAt { get; set; }

@@ -1,9 +1,11 @@
 using DarkContinent.DTOs.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DarkContinent.Controllers;
 
 
+[Authorize]
 public class BaseApiController : ControllerBase
 {
     protected ActionResult SuccessResponse(string message, object? data = null, int code = 200)

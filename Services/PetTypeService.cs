@@ -25,7 +25,7 @@ public class PetTypeService
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                IsAlive = p.IsAlive,
+                IsActive = p.IsActive,
                 MaxHunger = p.MaxHunger,
                 MaxEnergy = p.MaxEnergy,
                 MaxHappiness = p.MaxHappiness,
@@ -47,7 +47,7 @@ public class PetTypeService
             MaxHappiness = request.MaxHappiness,
             SleepEnergyGainPerHour = request.SleepEnergyGainPerHour,
             SleepHungerCostPerHour = request.SleepHungerCostPerHour,
-            IsAlive = request.IsAlive
+            IsActive = request.IsAlive
         };
 
         _context.PetTypes.Add(newPetType);
@@ -64,7 +64,7 @@ public class PetTypeService
                 MaxHappiness = newPetType.MaxHappiness,
                 SleepEnergyGainPerHour = newPetType.SleepEnergyGainPerHour,
                 SleepHungerCostPerHour = newPetType.SleepHungerCostPerHour,
-                IsAlive = newPetType.IsAlive
+                IsActive = newPetType.IsActive
             };
         }
         return null;
@@ -82,7 +82,7 @@ public class PetTypeService
                 .SetProperty(p => p.MaxHappiness, petType.MaxHappiness)
                 .SetProperty(p => p.SleepEnergyGainPerHour, petType.SleepEnergyGainPerHour)
                 .SetProperty(p => p.SleepHungerCostPerHour, petType.SleepHungerCostPerHour)
-                .SetProperty(p => p.IsAlive, petType.IsAlive)
+                .SetProperty(p => p.IsActive, petType.IsActive)
             );
         return result > 0;
     }

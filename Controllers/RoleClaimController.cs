@@ -1,3 +1,4 @@
+using DarkContinent.Authorization;
 using DarkContinent.DTOs.Requests;
 using DarkContinent.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ public class RoleClaimController : BaseApiController
     }
 
     [HttpGet("get-list-by-role/{RoleId}")]
+    [HasPermission("role-claim.read")]
     public async Task<IActionResult> GetByRoleId(string roleId)
     {
         var roleClaims = await _roleClaimService.GetByRoleIdAsync(roleId);
@@ -22,6 +24,7 @@ public class RoleClaimController : BaseApiController
     }
 
     [HttpPost("create")]
+    [HasPermission("role-claim.create")]
     public async Task<IActionResult> Create(CreateRoleClaimRequest request)
     {
         var result = await _roleClaimService.Create(request);
@@ -36,6 +39,7 @@ public class RoleClaimController : BaseApiController
     }
 
     [HttpPost("update")]
+    [HasPermission("role-claim.update")]
     public async Task<IActionResult> Update(UpdateRoleClaimRequest request)
     {
         await _roleClaimService.Update(request);
@@ -43,6 +47,7 @@ public class RoleClaimController : BaseApiController
     }
 
     [HttpDelete("delete/{id}")]
+    [HasPermission("role-claim.delete")]
     public async Task<IActionResult> Delete(int id)
     {
         await _roleClaimService.Delete(id);

@@ -1,3 +1,4 @@
+using DarkContinent.Authorization;
 using DarkContinent.DTOs.Requests;
 using DarkContinent.DTOs.Responses;
 using DarkContinent.Services;
@@ -17,12 +18,14 @@ public class PetTypeController : BaseApiController
     }
 
     [HttpGet("get-list")]
+    [HasPermission("pet-type.read")]
     public async Task<ActionResult<List<PetTypeResponse>>> GetListAsync()
     {
         return SuccessResponse("get successfully", await _petTypeService.GetPageAsync());
     }
 
     [HttpPost("create")]
+    [HasPermission("pet-type.create")]
     public async Task<ActionResult<PetTypeResponse>> CreateAsync(CreatePetTypeRequest request)
     {
         var result = await _petTypeService.CreateAsync(request);
@@ -33,6 +36,7 @@ public class PetTypeController : BaseApiController
     }
 
     [HttpPost("update")]
+    [HasPermission("pet-type.update")]
     public async Task<ActionResult<PetTypeResponse>> UpdateAsync(UpdatePetTypeRequest request)
     {
         var result = await _petTypeService.UpdateAsync(request);
@@ -42,6 +46,7 @@ public class PetTypeController : BaseApiController
     }
 
     [HttpDelete("delete/{id}")]
+    [HasPermission("pet-type.delete")]
     public async Task<ActionResult> DeleteAsync(int id)
     {
         var result = await _petTypeService.DeleteAsync(id);

@@ -1,4 +1,5 @@
 using DarkContinent.Data;
+using DarkContinent.Authorization;
 using DarkContinent.DTOs.Requests;
 using DarkContinent.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +19,7 @@ public class RoleController : BaseApiController
     }
     
     [HttpGet("get-list")]
+    [HasPermission("role.read")]
 
     public async Task<ActionResult> GetList(int page = 1, int pageSize = 10)
     {
@@ -26,6 +28,7 @@ public class RoleController : BaseApiController
     }
 
     [HttpPost("create")]
+    [HasPermission("role.create")]
     public async Task<ActionResult> Create([FromBody] CreateRoleRequest request)
     {
         await _roleService.create(request);
@@ -33,6 +36,7 @@ public class RoleController : BaseApiController
     }
 
     [HttpPost("update")]
+    [HasPermission("role.update")]
     public async Task<ActionResult> Update([FromBody] UpdateRoleRequest request)
     {
         await _roleService.update(request);
@@ -40,6 +44,7 @@ public class RoleController : BaseApiController
     }
 
     [HttpDelete("delete")]
+    [HasPermission("role.delete")]
     public async Task<ActionResult> Delete([FromBody] DeleteRoleRequest request)
     {
         await _roleService.delete(request);
